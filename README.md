@@ -6,7 +6,8 @@ The main file takes a data structure with fields 'data','genes' and 'headers' as
 Set path to  the TreeStructure class included, courtesy of http://www.mathworks.com/matlabcentral/fileexchange/35623-tree-data-structure-as-a-matlab-class. BSD license provided.
 
 To run ReKS using the example .mat file, type:
->>load BR_Normal.mat;
+
+>>load BR_Normal.mat;\n
 >>clusterMembership = ReKS_main(BR_Tumor);
 
 Future release will include visualization options and data export options.  
