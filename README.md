@@ -7,7 +7,8 @@ Set path to  the TreeStructure class included, courtesy of http://www.mathworks.
 
 To run ReKS using the example .mat file, type:
 
->>load BR_Normal.mat;\n
+>>load BR_Normal.mat;
+
 >>clusterMembership = ReKS_main(BR_Tumor);
 
 Future release will include visualization options and data export options.  
