@@ -3,7 +3,7 @@ Pac Symp Biocomput. 2013:212-23
 
 The main file takes a data structure with fields 'data','genes' and 'headers' as input. An example input file is provided (BR_Normal.mat). Future release will allow a tab delimited file as input.
 
-Set path to  the TreeStructure class included, courtesy of http://www.mathworks.com/matlabcentral/fileexchange/35623-tree-data-structure-as-a-matlab-class. BSD license provided.
+Set path to  the TreeStructure class included, courtesy of http://www.mathworks.com/matlabcentral/fileexchange/35623-tree-data-structure-as-a-matlab-class. BSD license provided. plot functionalities modified and expanded (methods plot, plot2)
 
 To run ReKS using the example .mat file, type:
 
