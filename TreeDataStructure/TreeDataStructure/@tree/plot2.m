@@ -181,6 +181,8 @@ display = 1;
     % Prepare the holder for horizontal line handles
     hLineHandleTree = tree(obj, 'clear');
     
+
+    
     k=1;
     for i = iterator
         
@@ -238,6 +240,7 @@ display = 1;
         hLineHandleTree = hLineHandleTree.set(i, hl);
         
     end
+ 
     
     for i=1:length(label2plot)
     ht = text(x12plot(i), y22plot(i), label2plot{i}, ...  A hack to have text displayed above bars
