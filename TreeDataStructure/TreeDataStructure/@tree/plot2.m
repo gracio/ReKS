@@ -143,9 +143,16 @@ display = 1;
         x1 = xpos.get(i);
         x2 = x1;
         
+        content = obj.get(i);
+        if ~isempty(content)
+                    hl = line([x1 x2], [y1 y2], ...
+            'Color', [.7 .9 .7], ...
+            'LineWidth', 5);
+        else
         hl = line([x1 x2], [y1 y2], ...
             'Color', LINE_COLOR_vertical, ...
             'LineWidth', 1);
+        end
         
         vLineHandleTree = vLineHandleTree.set(i, hl);
         
@@ -214,8 +221,7 @@ display = 1;
                 'VerticalAlignment', 'middle', ...
                 'FontName', 'Courier new', ...
                 'Interpreter', 'none', ...
-                'FontSize', 12, ...
-                'BackgroundColor',[.7 .9 .7]);
+                'FontSize', 12);
             
             textHandleTree = textHandleTree.set(i, ht);
         end

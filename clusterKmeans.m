@@ -2,7 +2,7 @@ function [discComp,U,S] = clusterKmeans(A,A2,dm,U,S)
 
 %function [discComp,U,S] = clusterKmeans(Pts,A,dm,U,S)
 
-% grace comment: A(required) is the affinity matrix(made sparse), dm(optional) is number of
+% grace comment: A(required) is the affinity matrix(made sparse), A2 is for transferred weights, dm(optional) is number of
 % clusters considered, U(optional) is eigenvectors in columns, S(optinoal) is eigenvalues.
 
 FALSE = (0 == 1);
