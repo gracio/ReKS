@@ -1,4 +1,4 @@
-function [final_newA final_allii final_alljj final_numE final_tau final_numU final_levelLabel, final_ComponentIndices] = myPerturbSnip(A,beta0,tauVal, epsilon, plotFigs,valOrPrctile,levelLabel,componentIndices)
+function [final_newA final_allii final_alljj final_numE final_tau final_numU final_levelLabel, final_ComponentIndices,S] = myPerturbSnip(A,beta0,tauVal, epsilon, plotFigs,valOrPrctile,levelLabel,componentIndices)
 % beta0values = 10:10:100
 % tauPrctilevalues = 0.001:0.001:0.01
 % epsilonvalues = [1/8 1/4 1/6 1/3 1/2]
@@ -245,44 +245,44 @@ final_numU = numU;
 final_levelLabel = levelLabel;
 final_ComponentIndices = {componentIndices};
 
-% if disconnected components are found
-if ( length( find( abs(S'-1)< 0.000001 ) ) >1 )
-    % display connected components at this point
-    numConnected = length(find(abs(S'-1)< 0.000001));
-    grouping = kmeans(U(:,1:numConnected),numConnected);
-    for i=1:numConnected
-        components{i} = find(grouping==i); % potentially a problem
-    end
-    fprintf(['Connected Components: ' num2str(numConnected) '\n'])
-    fprintf(['number of elements: ' num2str(length(components)) '\n']) %
-    
-    % recurse down
-    for i=1:numConnected
-        
-        % A and level are altered
-        [sub_newA sub_allii sub_alljj sub_numE sub_tau sub_numU sub_levelLabel sub_ComponentIndices] = myPerturbSnip(A(components{i},components{i}),beta0,tauVal, epsilon, plotFigs,valOrPrctile,[levelLabel '-' num2str(i)], componentIndices(components{i}));
-        
-        % update output
-        % reorder indices
-        final_newA(components{i},components{i}) = sub_newA;
-        final_allii= [final_allii sub_allii];
-        final_alljj= [final_alljj sub_alljj];
-        
-        % append
-        final_tau = [final_tau sub_tau];
-        final_numE = [final_numE sub_numE];
-        final_numU = [final_numU sub_numU];
-        
-        if iscellstr(sub_levelLabel)
-            final_levelLabel = [final_levelLabel sub_levelLabel];
-        else
-        final_levelLabel = [final_levelLabel {sub_levelLabel}];
-        end
-        final_ComponentIndices = [final_ComponentIndices sub_ComponentIndices];
-    end % go through every component
-    
-    
-end
+% % if disconnected components are found
+% if ( length( find( abs(S'-1)< 0.000001 ) ) >1 )
+%     % display connected components at this point
+%     numConnected = length(find(abs(S'-1)< 0.000001));
+%     grouping = kmeans(U(:,1:numConnected),numConnected);
+%     for i=1:numConnected
+%         components{i} = find(grouping==i); % potentially a problem
+%     end
+%     fprintf(['Connected Components: ' num2str(numConnected) '\n'])
+%     fprintf(['number of elements: ' num2str(length(components)) '\n']) %
+%     
+%     % recurse down
+%     for i=1:numConnected
+%         
+%         % A and level are altered
+%         [sub_newA sub_allii sub_alljj sub_numE sub_tau sub_numU sub_levelLabel sub_ComponentIndices] = myPerturbSnip(A(components{i},components{i}),beta0,tauVal, epsilon, plotFigs,valOrPrctile,[levelLabel '-' num2str(i)], componentIndices(components{i}));
+%         
+%         % update output
+%         % reorder indices
+%         final_newA(components{i},components{i}) = sub_newA;
+%         final_allii= [final_allii sub_allii];
+%         final_alljj= [final_alljj sub_alljj];
+%         
+%         % append
+%         final_tau = [final_tau sub_tau];
+%         final_numE = [final_numE sub_numE];
+%         final_numU = [final_numU sub_numU];
+%         
+%         if iscellstr(sub_levelLabel)
+%             final_levelLabel = [final_levelLabel sub_levelLabel];
+%         else
+%         final_levelLabel = [final_levelLabel {sub_levelLabel}];
+%         end
+%         final_ComponentIndices = [final_ComponentIndices sub_ComponentIndices];
+%     end % go through every component
+%     
+%     
+% end
 
 
 

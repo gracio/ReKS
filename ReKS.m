@@ -11,20 +11,34 @@ if length(A) <= minClustSize
     
 else
     
-    % perform spectral clustering
-    [discComp,U,S] = clusterKmeans(A,A2);
-    fprintf('did a clusterKmeans\n')
-    depthFromTop
-    % taking care of weird bug...some genes don't belong to any centroid
-    check = sum(discComp,1);
-    toDelete = find(check == 0);
-    if ~isempty(toDelete)
-        discComp(:,toDelete) = [];
+    % perform eigenCut
+    beta0values = 50;
+    tauPrctilevalues = 0.005;
+    epsilonvalues = 1/6;
+    tauVal = -0.25;
+    plotFigs = 0;
+    valOrPrctile = 'prctile';
+    
+    [A,~,~,~,~,~,~,~,S] = myPerturbSnip(A,beta0,tauVal, epsilon, plotFigs,valOrPrctile,[],[]);
+    
+    % find connected components
+    if length(find(abs(S'-1)< 0.000001))>1
+        fprintf('connected components detected.\n')
+        S
+        numConnected = length(find(abs(S'-1)< 0.000001));
+        [grouping nclasses] = gingcca(A,0);
+        uqdisc = unique(grouping);
+        for i=1:length(uqdisc)
+            discComp(grouping==uqdisc(i),i) = 1;
+        end
+        
+        return
     end
     
     % put the eigen values and eigen vectors to current node
-    [treeStruct.U] = treeStruct.U.set(currentNodeID,U);
-    [treeStruct.S] = treeStruct.S.set(currentNodeID,S);
+    %[treeStruct.U] = treeStruct.U.set(currentNodeID,U);
+    %[treeStruct.S] = treeStruct.S.set(currentNodeID,S);
+    [treeStruct.A] = treeStruct.A.set(currentNodeID,A);
     [treeStruct.discComp] = treeStruct.discComp.set(currentNodeID,discComp);
     
     % recurse on each cluster
@@ -39,8 +53,9 @@ else
         % add nnodeID to this subnode
         [treeStruct.nodeID] = treeStruct.nodeID.addnode(currentNodeID,subNodeID);
         % add empty eigen values and eigen vector space holdesr to this subnode
-        [treeStruct.U] = treeStruct.U.addnode(currentNodeID,[]);
-        [treeStruct.S] = treeStruct.S.addnode(currentNodeID,[]);
+        %[treeStruct.U] = treeStruct.U.addnode(currentNodeID,[]);
+        %[treeStruct.S] = treeStruct.S.addnode(currentNodeID,[]);
+        [treeStruct.A] = treeStruct.A.addnode(currentNodeID,[]);
         [treeStruct.discComp] = treeStruct.discComp.addnode(currentNodeID,[]);
         % add depth from top to this subnode
         [treeStruct.depthFromTop] = treeStruct.depthFromTop.addnode(currentNodeID,depthFromTop);
