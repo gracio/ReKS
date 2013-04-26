@@ -34,7 +34,7 @@ end
 % perform the data preparation step to obtain sparse symetrical affinity
 % matrix. Default options searches for 15 closest neighbors on the
 % covariance matrix, does not impute data, and uses 1-pearson correlation as the distance measure
-[dataStruct.sparseSymA, dataStruct.sparseA, dataStruct.dist, dataStruct.data] = prepDataForSPC(dataStruct.data,15,0,'corr');
+[dataStruct.sparseSymA, dataStruct.sparseA, dataStruct.dist, dataStruct.data] = prepDataForSPC(dataStruct.data,15,'corr');
 
 if display == 1
     figure
@@ -43,19 +43,31 @@ if display == 1
 end
 saveas(gcf,[savePath 'ReKS_sparseSymA'],'fig')
 
-
 [dataStruct.ReKS] = runClustering(dataStruct,[],'ReKS',n, []); 
 
 if display == 1
     figure
-    dataStruct.ReKS.treeStruct.numDescendants.plot
+    dataStruct.ReKS.treeStruct.numDescendants.plot    
 end
 saveas(gcf,[savePath 'ReKStree_numDescendants'],'fig')
 
+if display == 1
+    figure
+    dataStruct.ReKS.treeStruct.nodeID.plot    
+end
+saveas(gcf,[savePath 'ReKStree_nodeID'],'fig')
+
+if display == 1
+    groupMemOrder = cutByMinClust(dataStruct.ReKS.treeStruct,tree(),2,[],1,1);
+    figure
+    imagesc(dataStruct.sparseSymA(groupMemOrder(:,1),groupMemOrder(:,1)))
+end
+saveas(gcf,[savePath 'ReKS_sparseSymA, reordered to mirror tree'],'fig')
 
 % finally, transpose the data matrix back to return to user
 if dim==2
     dataStruct.data = dataStruct.data';
+    save([savePath 'ReKS.mat'])
 end
 
-save([savePath 'ReKS.mat'])
+
