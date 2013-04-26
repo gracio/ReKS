@@ -12,32 +12,35 @@ if length(A) <= minClustSize
 else
     
     % perform eigenCut
-    beta0values = 50;
-    tauPrctilevalues = 0.005;
-    epsilonvalues = 1/6;
+    beta0 = 50;
+    %tauPrctilevalues = 0.005;
+    epsilon = 1/8;
     tauVal = -0.25;
     plotFigs = 0;
-    valOrPrctile = 'prctile';
+    valOrPrctile = 'val';
     
     [A,~,~,~,~,~,~,~,S] = myPerturbSnip(A,beta0,tauVal, epsilon, plotFigs,valOrPrctile,[],[]);
-    
+    S
     % find connected components
     if length(find(abs(S'-1)< 0.000001))>1
         fprintf('connected components detected.\n')
         S
         numConnected = length(find(abs(S'-1)< 0.000001));
         [grouping nclasses] = gingcca(A,0);
+        grouping
         uqdisc = unique(grouping);
         for i=1:length(uqdisc)
             discComp(grouping==uqdisc(i),i) = 1;
         end
-        
-        return
+        U = [];
+   
+    else % if no connected components, use clusterkmeans
+        [discComp,U,S] = clusterKmeans(A,A2);
     end
     
     % put the eigen values and eigen vectors to current node
-    %[treeStruct.U] = treeStruct.U.set(currentNodeID,U);
-    %[treeStruct.S] = treeStruct.S.set(currentNodeID,S);
+    [treeStruct.U] = treeStruct.U.set(currentNodeID,U);
+    [treeStruct.S] = treeStruct.S.set(currentNodeID,S);
     [treeStruct.A] = treeStruct.A.set(currentNodeID,A);
     [treeStruct.discComp] = treeStruct.discComp.set(currentNodeID,discComp);
     
@@ -53,8 +56,8 @@ else
         % add nnodeID to this subnode
         [treeStruct.nodeID] = treeStruct.nodeID.addnode(currentNodeID,subNodeID);
         % add empty eigen values and eigen vector space holdesr to this subnode
-        %[treeStruct.U] = treeStruct.U.addnode(currentNodeID,[]);
-        %[treeStruct.S] = treeStruct.S.addnode(currentNodeID,[]);
+        [treeStruct.U] = treeStruct.U.addnode(currentNodeID,[]);
+        [treeStruct.S] = treeStruct.S.addnode(currentNodeID,[]);
         [treeStruct.A] = treeStruct.A.addnode(currentNodeID,[]);
         [treeStruct.discComp] = treeStruct.discComp.addnode(currentNodeID,[]);
         % add depth from top to this subnode

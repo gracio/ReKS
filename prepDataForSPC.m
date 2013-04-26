@@ -1,9 +1,10 @@
-function [S_sparse_sym, S_sparse, distances, data] = prepDataForSPC(data, topNneighbors,KNNimpute,distance)
+function [S_sparse_sym, S_sparse, distances, data] = prepDataForSPC(data, topNneighbors,distance)
 
 S_sparse_sym=[];S_sparse=[];distances=[];
 
 % filter genes if needed
-if KNNimpute == 1
+if isnan(sum(sum(data)))
+    fprintf('imputing misisng values\n...')
 tic
 % fprintf(['total # genes ' num2str(size(data,1)) ' \n']);
 % 

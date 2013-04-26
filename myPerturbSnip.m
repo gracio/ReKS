@@ -23,7 +23,7 @@ tau = NaN;
 % use, or disconnected components have been found. only consider A's with
 % size > 2
 while ~isempty(ii) && length(A)>2
-    
+    numel(A)
     ii=[];
     % step 1-------------------------------------------------------------
     % A is given as input
@@ -54,7 +54,6 @@ while ~isempty(ii) && length(A)>2
     binNhbr = full(A) > 0;
     dLogHalfAll = [];
     dLogHalfMinStack = [];
-    
     k2use = setdiff(find(beta_k>beta0*epsilon),find(abs(S'-1)< 0.000001)); % exclude eigenvectors with singular values of 1. take care of floating point precision
     fprintf(['eigenvectors with eigenvalues above the thresholds and <1: ' num2str(k2use) '\n'])
     
@@ -64,8 +63,10 @@ while ~isempty(ii) && length(A)>2
         
         % take all Uk with half life > beta0* epsilon
         for i = 1:length(k2use)
+            k2use(i)
             id = k2use(i);
             % perturbBeta implements <equation 7.28>
+            fprintf('performing eigenCut\n')
             dLogHalf{id} = perturbBeta(beta0,S(id),U(:,id),DD) ;
             dLogHalf{id} = dLogHalf{id} .* binNhbr; % only take parts of the matrix that originally had affinity value
             
@@ -76,20 +77,14 @@ while ~isempty(ii) && length(A)>2
             else
                 dLogHalfMinStack = min(dLogHalfMinStack,dLogHalf{id});
             end
+            fprintf('finished. now off to do non-maximal supressions\n')
             
             %step 5 non-maximal supression...potential speedup available-----
-            isMinimal{id} = zeros(size(dLogHalf{id}));
-            for i=1:size(dLogHalf{id},1)
-                for j=i+1:size(dLogHalf{id},2)
-                    minval = min(dLogHalf{id}(i,:));
-                    jLoc = find(dLogHalf{id}(i,:) == minval); % for cases when there's more than one minimal values
-                    minval = min(dLogHalf{id}(:,j));
-                    iLoc = find(dLogHalf{id}(:,j) == minval); % for cases when there's more than one minimal values
-                    if (ismember(j,jLoc)) && (ismember(i,iLoc))
-                        isMinimal{id}(i,j) = 1;
-                    end
-                end
-            end
+            minvali = full(min(dLogHalf{id},[],1));
+            minvalj = full(min(dLogHalf{id},[],2));
+            fprintf('now\n')
+            isMinimal{id} = (full(dLogHalf{id}) <= repmat(minvali,size(dLogHalf{id},1),1)) & (dLogHalf{id} <= repmat(minvalj,1,size(dLogHalf{id},2)));
+            fprintf('done\n')
             
             dLogHalfAll = [dLogHalfAll ; dLogHalf{id}(find(binNhbr))]; % put all the half life sensitivity values in one single vector for plotting later
         end
@@ -113,8 +108,8 @@ while ~isempty(ii) && length(A)>2
         toCut = zeros(size(A));
         for i = 1:length(k2use)
             id = k2use(i);
-            % toCut_id = (triu(dLogHalf{id},1)<tau(k)) & (triu(dLogHalf{id},1)~=0) & (isMinimal{id});
-            toCut_id = (triu(dLogHalf{id},1)<tau(k)) & (triu(dLogHalf{id},1)~=0) ;
+            toCut_id = (triu(dLogHalf{id},1)<tau(k)) & (triu(dLogHalf{id},1)~=0) & (isMinimal{id});
+            %toCut_id = (triu(dLogHalf{id},1)<tau(k)) & (triu(dLogHalf{id},1)~=0) ;
             toCut = toCut | toCut_id;
         end
         [ii,jj]= find(toCut);

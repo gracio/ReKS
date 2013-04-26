@@ -17,8 +17,8 @@ switch clusteringMethod
         treeStruct.groupMembers = tree(1:length(processedData.sparseSymA)); % need recursion
         treeStruct.numDescendants = tree(length(processedData.sparseSymA)); % calculate along the way
         treeStruct.A = tree; % calculate along the way
-%         treeStruct.S = tree; % calculate along the way
-%         treeStruct.U = tree; % calculate along the way
+        treeStruct.S = tree; % calculate along the way
+        treeStruct.U = tree; % calculate along the way
         treeStruct.discComp = tree; % calculate along the way
         treeStruct.nodeID = tree(1);
         
